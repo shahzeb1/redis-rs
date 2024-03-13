@@ -21,9 +21,10 @@ fn do_action(input: &str, data: &mut HashMap<String, String>) {
                 None => todo!("Handle GET with no key"),
             },
             "SET" => {
-                let (key, value) = (input_iter.next(), input_iter.next());
+                let key = input_iter.next();
+                let value = input_iter.collect::<Vec<&str>>().join(" ");
                 match (key, value) {
-                    (Some(k), Some(v)) => Action::Set(k.to_string(), v.to_string()),
+                    (Some(k), v) => Action::Set(k.to_string(), v.to_string()),
                     _ => todo!("Handle SET with no key or value"),
                 }
             }
