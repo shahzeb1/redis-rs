@@ -92,7 +92,7 @@ fn main() {
 
     // This loop handles user input
     loop {
-        print!("> ");
+        print!("❯ ");
         let _ = io::stdout().flush(); // Flush screen to show >
 
         let mut input = String::new();
