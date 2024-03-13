@@ -7,15 +7,30 @@ enum Action {
 }
 
 fn do_action(input: &str) {
-    let upper = input.to_uppercase();
+    let mut input_iter = input.split_whitespace();
+    let command_optional = input_iter.next();
+    if let Some(command) = command_optional {
+        let upper = command.to_uppercase();
 
-    let action = match upper.as_str() {
-        "GET" => Action::Get("blah".to_string()),
-        "SET" => Action::Set("abc".to_string(), "def".to_string()),
-        _ => !todo!("Handle unknown command"),
-    };
+        let action: Action = match upper.as_str() {
+            "GET" => match input_iter.next() {
+                Some(k) => Action::Get(k.to_string()),
+                None => todo!("Handle GET with no key"),
+            },
+            "SET" => {
+                let (key, value) = (input_iter.next(), input_iter.next());
+                match (key, value) {
+                    (Some(k), Some(v)) => Action::Set(k.to_string(), v.to_string()),
+                    _ => todo!("Handle SET with no key or value"),
+                }
+            }
+            _ => todo!("Handle unknown command {input}"),
+        };
 
-    println!("{:?}", action);
+        println!("{:?}", action);
+    } else {
+        todo!("No command found")
+    }
 }
 
 fn main() {
