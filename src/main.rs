@@ -6,6 +6,7 @@ use std::io::{self, Write};
 enum Action {
     Get(String),
     Set(String, String),
+    Incr(String),
 }
 
 enum Value {
@@ -43,6 +44,10 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
                     _ => todo!("Handle SET with no key or value"),
                 }
             }
+            "INCR" => match input_iter.next() {
+                Some(k) => Action::Incr(k.to_string()),
+                None => todo!("Handle INCR with no key"),
+            },
             _ => todo!("Handle unknown command {input}"),
         };
 
@@ -62,6 +67,19 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
                     data.insert(key, Value::Str(value));
                 }
                 println!("OK")
+            }
+            Action::Incr(key) => {
+                if let Some(value) = data.get_mut(&key) {
+                    if let Value::Int(int_value) = value {
+                        *int_value += 1;
+                        println!("(integer) {}", int_value);
+                    } else {
+                        println!("Value is not an integer or out of range");
+                    }
+                } else {
+                    data.insert(key, Value::Int(1));
+                    println!("(integer) {}", 1);
+                }
             }
         }
     } else {
