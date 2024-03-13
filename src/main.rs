@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt;
 use std::io::{self, Write};
 
 #[derive(Debug)]
@@ -7,7 +8,21 @@ enum Action {
     Set(String, String),
 }
 
-fn do_action(input: &str, data: &mut HashMap<String, String>) {
+enum Value {
+    Str(String),
+    Int(i32),
+}
+
+impl fmt::Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Value::Str(s) => write!(f, "{}", s),
+            Value::Int(i) => write!(f, "{}", i),
+        }
+    }
+}
+
+fn do_action(input: &str, data: &mut HashMap<String, Value>) {
     let mut input_iter = input.split_whitespace();
     let command_optional = input_iter.next();
     if let Some(command) = command_optional {
@@ -41,7 +56,11 @@ fn do_action(input: &str, data: &mut HashMap<String, String>) {
                 }
             }
             Action::Set(key, value) => {
-                data.insert(key, value);
+                if let Ok(int_value) = value.parse::<i32>() {
+                    data.insert(key, Value::Int(int_value));
+                } else {
+                    data.insert(key, Value::Str(value));
+                }
                 println!("OK")
             }
         }
@@ -51,7 +70,7 @@ fn do_action(input: &str, data: &mut HashMap<String, String>) {
 }
 
 fn main() {
-    let mut data: HashMap<String, String> = HashMap::new();
+    let mut data: HashMap<String, Value> = HashMap::new();
 
     // This loop handles user input
     loop {
