@@ -23,6 +23,49 @@ enum Value {
     Int(i32),
 }
 
+trait ActionTrait {
+    fn execute(&self, data: &mut HashMap<String, Value>);
+}
+
+impl ActionTrait for Get {
+    fn execute(&self, data: &mut HashMap<String, Value>) {
+        if let Some(value) = data.get(&self.0) {
+            println!("{}", value);
+        } else {
+            println!("Key {} not found", self.0);
+        }
+    }
+}
+
+impl ActionTrait for Set {
+    fn execute(&self, data: &mut HashMap<String, Value>) {
+        let key = self.key.clone();
+        let value = self.value.clone();
+        if let Ok(int_value) = value.parse::<i32>() {
+            data.insert(key, Value::Int(int_value));
+        } else {
+            data.insert(key, Value::Str(value));
+        }
+        println!("OK");
+    }
+}
+
+impl ActionTrait for Incr {
+    fn execute(&self, data: &mut HashMap<String, Value>) {
+        if let Some(value) = data.get_mut(&self.0) {
+            if let Value::Int(int_value) = value {
+                *int_value += 1;
+                println!("(integer) {}", int_value);
+            } else {
+                println!("Value is not an integer or out of range");
+            }
+        } else {
+            data.insert(self.0.clone(), Value::Int(1));
+            println!("(integer) {}", 1);
+        }
+    }
+}
+
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -71,38 +114,9 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
     let action_result = parse_action_from_user_string(input);
     match action_result {
         Ok(action) => match action {
-            Action::GetAction(itm) => {
-                let key = itm.0;
-                if let Some(value) = data.get(&key) {
-                    println!("{}", value);
-                } else {
-                    println!("Key {key} not found");
-                }
-            }
-            Action::SetAction(itm) => {
-                let key = itm.key;
-                let value = itm.value;
-                if let Ok(int_value) = value.parse::<i32>() {
-                    data.insert(key, Value::Int(int_value));
-                } else {
-                    data.insert(key, Value::Str(value));
-                }
-                println!("OK")
-            }
-            Action::IncrAction(itm) => {
-                let key = itm.0;
-                if let Some(value) = data.get_mut(&key) {
-                    if let Value::Int(int_value) = value {
-                        *int_value += 1;
-                        println!("(integer) {}", int_value);
-                    } else {
-                        println!("Value is not an integer or out of range");
-                    }
-                } else {
-                    data.insert(key, Value::Int(1));
-                    println!("(integer) {}", 1);
-                }
-            }
+            Action::GetAction(get_item) => get_item.execute(data),
+            Action::SetAction(set_item) => set_item.execute(data),
+            Action::IncrAction(incr_item) => incr_item.execute(data),
         },
 
         Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
