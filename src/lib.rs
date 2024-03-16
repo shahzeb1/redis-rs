@@ -1,4 +1,5 @@
-use crate::actions::{Action, ActionTrait, DataType, Get, Incr};
+use crate::actions::get::Get;
+use crate::actions::{Action, ActionTrait, DataType, Incr};
 use std::collections::HashMap;
 
 mod actions;

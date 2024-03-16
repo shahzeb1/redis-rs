@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
 
-pub struct Get(pub String);
+pub mod get;
+use get::Get;
 
 pub struct Set {
     pub key: String,
@@ -26,23 +27,13 @@ pub enum Action {
 }
 
 pub trait ActionTrait {
-    fn execute(&self, data: &mut HashMap<String, Value>);
+    fn execute(&self, data: &mut DataType);
 }
 
 // These should be their own files:
 
-impl ActionTrait for Get {
-    fn execute(&self, data: &mut HashMap<String, Value>) {
-        if let Some(value) = data.get(&self.0) {
-            println!("{}", value);
-        } else {
-            println!("Key {} not found", self.0);
-        }
-    }
-}
-
 impl ActionTrait for Set {
-    fn execute(&self, data: &mut HashMap<String, Value>) {
+    fn execute(&self, data: &mut DataType) {
         let key = self.key.clone();
         let value = self.value.clone();
         if let Ok(int_value) = value.parse::<i32>() {
@@ -55,7 +46,7 @@ impl ActionTrait for Set {
 }
 
 impl ActionTrait for Incr {
-    fn execute(&self, data: &mut HashMap<String, Value>) {
+    fn execute(&self, data: &mut DataType) {
         if let Some(value) = data.get_mut(&self.0) {
             if let Value::Int(int_value) = value {
                 *int_value += 1;
