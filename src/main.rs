@@ -3,10 +3,19 @@ use std::fmt;
 use std::io::{self, Write};
 
 #[derive(Debug)]
+struct Get(String);
+
+struct Set {
+    key: String,
+    value: String,
+}
+
+struct Incr(String);
+
 enum Action {
-    Get(String),
-    Set(String, String),
-    Incr(String),
+    GetAction(Get),
+    SetAction(Set),
+    IncrAction(Incr),
 }
 
 enum Value {
@@ -33,22 +42,25 @@ fn parse_action_from_user_string(input: &str) -> Result<Action, &'static str> {
         // and create an Action to represent it
         return match upper.as_str() {
             "GET" => match input_iter.next() {
-                Some(k) => Ok(Action::Get(k.to_string())),
+                Some(k) => Ok(Action::GetAction(Get(k.to_string()))),
                 None => Err("Handle GET with no key"),
             },
             "SET" => {
                 let key = input_iter.next();
                 let value = input_iter.collect::<Vec<&str>>().join(" ");
                 match (key, value) {
-                    (Some(k), v) => Ok(Action::Set(k.to_string(), v.to_string())),
+                    (Some(k), v) => Ok(Action::SetAction(Set {
+                        key: k.to_string(),
+                        value: v,
+                    })),
                     _ => Err("Handle SET with no key or value"),
                 }
             }
             "INCR" => match input_iter.next() {
-                Some(k) => Ok(Action::Incr(k.to_string())),
+                Some(k) => Ok(Action::IncrAction(Incr(k.to_string()))),
                 None => Err("Handle INCR with no key"),
             },
-            _ => Err("Handle unknown command {input}"),
+            _ => Err("Handle unknown command"),
         };
     } else {
         Err("No command found")
@@ -59,14 +71,17 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
     let action_result = parse_action_from_user_string(input);
     match action_result {
         Ok(action) => match action {
-            Action::Get(key) => {
+            Action::GetAction(itm) => {
+                let key = itm.0;
                 if let Some(value) = data.get(&key) {
                     println!("{}", value);
                 } else {
                     println!("Key {key} not found");
                 }
             }
-            Action::Set(key, value) => {
+            Action::SetAction(itm) => {
+                let key = itm.key;
+                let value = itm.value;
                 if let Ok(int_value) = value.parse::<i32>() {
                     data.insert(key, Value::Int(int_value));
                 } else {
@@ -74,7 +89,8 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
                 }
                 println!("OK")
             }
-            Action::Incr(key) => {
+            Action::IncrAction(itm) => {
+                let key = itm.0;
                 if let Some(value) = data.get_mut(&key) {
                     if let Value::Int(int_value) = value {
                         *int_value += 1;
