@@ -23,7 +23,7 @@ impl fmt::Display for Value {
     }
 }
 
-fn do_action(input: &str, data: &mut HashMap<String, Value>) {
+fn parse_action_from_user_string(input: &str) -> Result<Action, &'static str> {
     let mut input_iter = input.split_whitespace();
     let command_optional = input_iter.next();
     if let Some(command) = command_optional {
@@ -31,28 +31,34 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
 
         // Figure out what the user wants to do,
         // and create an Action to represent it
-        let action: Action = match upper.as_str() {
+        return match upper.as_str() {
             "GET" => match input_iter.next() {
-                Some(k) => Action::Get(k.to_string()),
-                None => todo!("Handle GET with no key"),
+                Some(k) => Ok(Action::Get(k.to_string())),
+                None => Err("Handle GET with no key"),
             },
             "SET" => {
                 let key = input_iter.next();
                 let value = input_iter.collect::<Vec<&str>>().join(" ");
                 match (key, value) {
-                    (Some(k), v) => Action::Set(k.to_string(), v.to_string()),
-                    _ => todo!("Handle SET with no key or value"),
+                    (Some(k), v) => Ok(Action::Set(k.to_string(), v.to_string())),
+                    _ => Err("Handle SET with no key or value"),
                 }
             }
             "INCR" => match input_iter.next() {
-                Some(k) => Action::Incr(k.to_string()),
-                None => todo!("Handle INCR with no key"),
+                Some(k) => Ok(Action::Incr(k.to_string())),
+                None => Err("Handle INCR with no key"),
             },
-            _ => todo!("Handle unknown command {input}"),
+            _ => Err("Handle unknown command {input}"),
         };
+    } else {
+        Err("No command found")
+    }
+}
 
-        // Based on the action, mutate or get data
-        match action {
+fn do_action(input: &str, data: &mut HashMap<String, Value>) {
+    let action_result = parse_action_from_user_string(input);
+    match action_result {
+        Ok(action) => match action {
             Action::Get(key) => {
                 if let Some(value) = data.get(&key) {
                     println!("{}", value);
@@ -81,9 +87,9 @@ fn do_action(input: &str, data: &mut HashMap<String, Value>) {
                     println!("(integer) {}", 1);
                 }
             }
-        }
-    } else {
-        todo!("No command found")
+        },
+
+        Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
     }
 }
 
