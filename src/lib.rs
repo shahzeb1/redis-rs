@@ -1,4 +1,5 @@
 use crate::actions::get::Get;
+use crate::actions::set::Set;
 use crate::actions::{Action, ActionTrait, DataType, Incr};
 use std::collections::HashMap;
 
@@ -23,7 +24,7 @@ fn parse_action_from_user_string(input: &str) -> Result<Action, &'static str> {
                 let key = input_iter.next();
                 let value = input_iter.collect::<Vec<&str>>().join(" ");
                 match (key, value) {
-                    (Some(k), v) => Ok(Action::SetAction(actions::Set {
+                    (Some(k), v) => Ok(Action::SetAction(Set {
                         key: k.to_string(),
                         value: v,
                     })),
