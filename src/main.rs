@@ -1,10 +1,10 @@
-use rebis::{create_data_container, run};
+use rebis::{Runner, RunnerContainer};
 use std::io::{self, Write};
 
 mod actions;
 
 fn main() {
-    let mut data = create_data_container();
+    let mut runner: RunnerContainer = Runner::new();
 
     // This loop handles user input
     loop {
@@ -17,6 +17,6 @@ fn main() {
             .read_line(&mut input)
             .expect("Failed to read user input");
 
-        run(input.trim(), &mut data);
+        runner.run(input.trim())
     }
 }

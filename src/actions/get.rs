@@ -10,7 +10,7 @@ impl ActionTrait for Get {
         // so we can just return.
     }
 
-    fn print(&self, data: &mut DataType) {
+    fn print(&self, data: &DataType) {
         print_value!("\"{}\"", "(nil)", data.get(&self.0));
     }
 }

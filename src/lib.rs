@@ -1,67 +1,41 @@
-use crate::actions::get::Get;
-use crate::actions::incr::Incr;
-use crate::actions::set::Set;
-use crate::actions::{Action, ActionTrait, DataType};
+use crate::actions::{parse_action_from_user_string, Action, ActionTrait, DataType};
 use std::collections::HashMap;
 
 mod actions;
 
-// A utility function used to parse user provided string
-// into an Action struct which we can call the .execute() func on.
-fn parse_action_from_user_string(input: &str) -> Result<Action, &'static str> {
-    let mut input_iter = input.split_whitespace();
-    let command_optional = input_iter.next();
-    if let Some(command) = command_optional {
-        let upper = command.to_uppercase();
-
-        // Figure out what the user wants to do,
-        // and create an Action to represent it
-        return match upper.as_str() {
-            "GET" => match input_iter.next() {
-                Some(k) => Ok(Action::GetAction(Get(k.to_string()))),
-                None => Err("Handle GET with no key"),
-            },
-            "SET" => {
-                let key = input_iter.next();
-                let value = input_iter.collect::<Vec<&str>>().join(" ");
-                match (key, value) {
-                    (Some(k), v) => Ok(Action::SetAction(Set {
-                        key: k.to_string(),
-                        value: v,
-                    })),
-                    _ => Err("Handle SET with no key or value"),
-                }
-            }
-            "INCR" => match input_iter.next() {
-                Some(k) => Ok(Action::IncrAction(Incr(k.to_string()))),
-                None => Err("Handle INCR with no key"),
-            },
-            _ => Err("Handle unknown command"),
-        };
-    } else {
-        Err("No command found")
-    }
+pub struct RunnerContainer {
+    data: DataType,
 }
 
-// The main entrypoint for the library
-// Pass in the user input string and the data container
-// and this function will execute the action on the data container.
-pub fn run(input: &str, data: &mut DataType) {
-    let action_result = parse_action_from_user_string(input);
-    match action_result {
-        Ok(action) => match action {
-            Action::GetAction(get_item) => get_item.print(data),
-            Action::SetAction(set_item) => {
-                set_item.execute(data);
-                set_item.print(data);
-            }
-            Action::IncrAction(incr_item) => {
-                incr_item.execute(data);
-                incr_item.print(data);
-            }
-        },
+pub trait Runner {
+    fn new() -> Self;
+    fn run(&mut self, input: &str);
+}
 
-        Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
+impl Runner for RunnerContainer {
+    fn new() -> Self {
+        let data = create_data_container();
+        return RunnerContainer { data };
+    }
+
+    fn run(&mut self, input: &str) {
+        let action_result = parse_action_from_user_string(input);
+
+        match action_result {
+            Ok(action) => match action {
+                Action::GetAction(get_item) => get_item.print(&self.data),
+                Action::SetAction(set_item) => {
+                    set_item.execute(&mut self.data);
+                    set_item.print(&self.data);
+                }
+                Action::IncrAction(incr_item) => {
+                    incr_item.execute(&mut self.data);
+                    incr_item.print(&self.data);
+                }
+            },
+
+            Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
+        }
     }
 }
 

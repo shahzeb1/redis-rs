@@ -15,7 +15,7 @@ impl ActionTrait for Incr {
         }
     }
 
-    fn print(&self, data: &mut DataType) {
+    fn print(&self, data: &DataType) {
         print_value!(
             "(integer) {}",
             "Value is not an integer or out of range",

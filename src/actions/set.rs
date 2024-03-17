@@ -16,7 +16,7 @@ impl ActionTrait for Set {
         }
     }
 
-    fn print(&self, _: &mut DataType) {
+    fn print(&self, _: &DataType) {
         println!("OK");
     }
 }
