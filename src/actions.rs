@@ -30,7 +30,11 @@ pub enum Action {
 // Every new action in the actions/ folder must
 // implement this trait.
 pub trait ActionTrait {
+    // Execute mutates the data
     fn execute(&self, data: &mut DataType);
+
+    // Print the value to the console
+    fn print(&self, data: &mut DataType);
 }
 
 // A way to print out the Values depending on the type of data.

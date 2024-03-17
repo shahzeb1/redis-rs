@@ -14,6 +14,9 @@ impl ActionTrait for Set {
         } else {
             data.insert(key, Value::Str(value));
         }
+    }
+
+    fn print(&self, _: &mut DataType) {
         println!("OK");
     }
 }

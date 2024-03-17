@@ -50,9 +50,15 @@ pub fn run(input: &str, data: &mut DataType) {
     let action_result = parse_action_from_user_string(input);
     match action_result {
         Ok(action) => match action {
-            Action::GetAction(get_item) => get_item.execute(data),
-            Action::SetAction(set_item) => set_item.execute(data),
-            Action::IncrAction(incr_item) => incr_item.execute(data),
+            Action::GetAction(get_item) => get_item.print(data),
+            Action::SetAction(set_item) => {
+                set_item.execute(data);
+                set_item.print(data);
+            }
+            Action::IncrAction(incr_item) => {
+                incr_item.execute(data);
+                incr_item.print(data);
+            }
         },
 
         Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
