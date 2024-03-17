@@ -41,8 +41,23 @@ pub trait ActionTrait {
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Value::Str(s) => write!(f, "\"{}\"", s),
-            Value::Int(i) => write!(f, "\"{}\"", i),
+            Value::Str(s) => write!(f, "{}", s),
+            Value::Int(i) => write!(f, "{}", i),
         }
     }
+}
+
+mod actions {
+    macro_rules! print_value {
+        ($success:expr, $failure:expr, $value:expr) => {
+            if let Some(value) = $value {
+                println!($success, value);
+            } else {
+                println!($failure);
+            }
+        };
+    }
+
+    // Bit of a hack on how to export macros: https://stackoverflow.com/a/31749071
+    pub(crate) use print_value;
 }

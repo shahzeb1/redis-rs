@@ -1,3 +1,5 @@
+use crate::actions::actions::print_value;
+
 use super::{ActionTrait, DataType, Value};
 
 pub struct Incr(pub String);
@@ -14,10 +16,10 @@ impl ActionTrait for Incr {
     }
 
     fn print(&self, data: &mut DataType) {
-        if let Some(value) = data.get(&self.0) {
-            println!("(integer) {}", value);
-        } else {
-            println!("Value is not an integer or out of range");
-        }
+        print_value!(
+            "(integer) {}",
+            "Value is not an integer or out of range",
+            data.get(&self.0)
+        );
     }
 }
