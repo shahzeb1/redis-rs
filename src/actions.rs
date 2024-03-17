@@ -1,50 +1,39 @@
+use get::Get;
+use incr::Incr;
+use set::Set;
 use std::collections::HashMap;
 use std::fmt;
 
 pub mod get;
+pub mod incr;
 pub mod set;
-use get::Get;
-use set::Set;
 
-// This value enum is only used in the HashMap
+// This value enum is only used in the HashMap.
 pub enum Value {
     Str(String),
     Int(i32),
 }
 
-// DataType of the HashMap
+// DataType of the HashMap.
 pub type DataType = HashMap<String, Value>;
 
-pub struct Incr(pub String);
-
+// This is the Action that contains all the data
+// that specific action needs to execute.
+// TODO: Adding this macro so compiler warning goes away.
+#[allow(dead_code)]
 pub enum Action {
     GetAction(Get),
     SetAction(Set),
     IncrAction(Incr),
 }
 
+// Every new action in the actions/ folder must
+// implement this trait.
 pub trait ActionTrait {
     fn execute(&self, data: &mut DataType);
 }
 
-// These should be their own files:
-
-impl ActionTrait for Incr {
-    fn execute(&self, data: &mut DataType) {
-        if let Some(value) = data.get_mut(&self.0) {
-            if let Value::Int(int_value) = value {
-                *int_value += 1;
-                println!("(integer) {}", int_value);
-            } else {
-                println!("Value is not an integer or out of range");
-            }
-        } else {
-            data.insert(self.0.clone(), Value::Int(1));
-            println!("(integer) {}", 1);
-        }
-    }
-}
-
+// A way to print out the Values depending on the type of data.
 impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {

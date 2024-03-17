@@ -1,6 +1,7 @@
 use crate::actions::get::Get;
+use crate::actions::incr::Incr;
 use crate::actions::set::Set;
-use crate::actions::{Action, ActionTrait, DataType, Incr};
+use crate::actions::{Action, ActionTrait, DataType};
 use std::collections::HashMap;
 
 mod actions;
