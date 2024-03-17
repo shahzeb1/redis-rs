@@ -9,13 +9,14 @@ pub mod incr;
 pub mod set;
 
 // This value enum is only used in the HashMap.
-pub enum Value {
+#[derive(PartialEq, Debug)]
+pub enum ValueType {
     Str(String),
     Int(i32),
 }
 
 // DataType of the HashMap.
-pub type DataType = HashMap<String, Value>;
+pub type DataType = HashMap<String, ValueType>;
 
 // This is the Action that contains all the data
 // that specific action needs to execute.
@@ -34,11 +35,11 @@ pub trait ActionTrait {
 }
 
 // A way to print out the Values depending on the type of data.
-impl fmt::Display for Value {
+impl fmt::Display for ValueType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Value::Str(s) => write!(f, "\"{}\"", s),
-            Value::Int(i) => write!(f, "\"{}\"", i),
+            ValueType::Str(s) => write!(f, "\"{}\"", s),
+            ValueType::Int(i) => write!(f, "\"{}\"", i),
         }
     }
 }
