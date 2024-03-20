@@ -1,4 +1,4 @@
-use rebis::{Runner, RunnerContainer};
+use redis::{Runner, RunnerContainer};
 use std::io::{self, Write};
 
 mod actions;

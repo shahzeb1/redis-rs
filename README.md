@@ -1,4 +1,4 @@
-# Re🅱️is
+# Redis
 
 This is a simple CLI Redis inspired project that supports the `GET`, `SET`, and `INCR` commands.
 
@@ -9,9 +9,9 @@ This is a simple CLI Redis inspired project that supports the `GET`, `SET`, and 
 
 ```sh
 ❯ cargo run
-   Compiling rebis v0.1.0 (/Users/user/rebis)
+   Compiling redis v0.1.0 (/Users/user/redis)
     Finished dev [unoptimized + debuginfo] target(s) in 1.52s
-     Running `target/debug/rebis`
+     Running `target/debug/redis`
 > set foo 1
 OK
 > set hello world
