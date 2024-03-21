@@ -1,10 +1,10 @@
-use redis::{Runner, RunnerContainer};
+use redis::{Runner, ShellRunner};
 use std::io::{self, Write};
 
 mod actions;
 
 fn main() {
-    let mut runner: RunnerContainer = Runner::new();
+    let mut runner: Runner = ShellRunner::new();
 
     // This loop handles user input
     loop {
@@ -17,6 +17,6 @@ fn main() {
             .read_line(&mut input)
             .expect("Failed to read user input");
 
-        runner.run(input.trim())
+        runner.run(input.trim());
     }
 }

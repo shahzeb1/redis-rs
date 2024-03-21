@@ -3,19 +3,19 @@ use std::collections::HashMap;
 
 mod actions;
 
-pub struct RunnerContainer {
+pub struct Runner {
     data: DataType,
 }
 
-pub trait Runner {
+pub trait ShellRunner {
     fn new() -> Self;
     fn run(&mut self, input: &str);
 }
 
-impl Runner for RunnerContainer {
+impl ShellRunner for Runner {
     fn new() -> Self {
         let data = create_data_container();
-        return RunnerContainer { data };
+        return Runner { data };
     }
 
     fn run(&mut self, input: &str) {
