@@ -1,10 +1,10 @@
-use redis::{Runner, ShellRunner};
+use redis::{ShellRunner, ShellRunnerContainer};
 use std::io::{self, Write};
 
 mod actions;
 
 fn main() {
-    let mut runner: Runner = ShellRunner::new();
+    let mut runner: ShellRunnerContainer = ShellRunner::new();
 
     // This loop handles user input
     loop {

@@ -2,20 +2,24 @@ use crate::actions::{parse_action_from_user_string, Action, ActionTrait, DataTyp
 use std::collections::HashMap;
 
 mod actions;
+mod lib_wasm;
 
-pub struct Runner {
+pub struct ShellRunnerContainer {
     data: DataType,
 }
 
+// The only reason I created this trait was so that
+// the WASM runner could reuse the same methods.
+// Read more about why this didn't get used in lib_wasm.rs
 pub trait ShellRunner {
     fn new() -> Self;
     fn run(&mut self, input: &str);
 }
 
-impl ShellRunner for Runner {
+impl ShellRunner for ShellRunnerContainer {
     fn new() -> Self {
         let data = create_data_container();
-        return Runner { data };
+        return ShellRunnerContainer { data };
     }
 
     fn run(&mut self, input: &str) {

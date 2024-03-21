@@ -24,9 +24,21 @@ world
 
 Here's a primer on [Redis cheatsheet](https://developer.redis.com/howtos/quick-start/cheat-sheet/).
 
+## Build the WASM artifacts:
+
+Make sure you have [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) installed. Good [getting started guide](https://rustwasm.github.io/wasm-bindgen/introduction.html).
+
+```sh
+❯ wasm-pack --version
+wasm-pack 0.12.1
+
+❯ wasm-pack build
+```
+
 ## TODO
 
-- [ ] Address various `todo!()` in the codebase
-- [ ] Better module structure, main file is too big
-  - [ ] Break up each action into its own file (module)
-- [ ] Export a wasm lib so we can run this in the browser
+- [x] Address various `todo!()` in the codebase
+- [x] Better module structure, main file is too big
+  - [x] Break up each action into its own file (module)
+- [x] Export a wasm lib so we can run this in the browser
+- [ ] Add new Redis actions. Feel free to contribute!
