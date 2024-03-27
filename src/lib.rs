@@ -23,9 +23,11 @@ impl ShellRunner for ShellRunnerContainer {
     }
 
     fn run(&mut self, input: &str) {
+        // Parse the action enum from the user's string input:
         let action_result = parse_action_from_user_string(input);
 
         match action_result {
+            // Did we get a valid action back?
             Ok(action) => match action {
                 Action::GetAction(get_item) => get_item.print(&self.data),
                 Action::SetAction(set_item) => {
@@ -38,6 +40,7 @@ impl ShellRunner for ShellRunnerContainer {
                 }
             },
 
+            // User action wasn't valid, return an error
             Err(e) => println!("(error) I'm sorry, I don't recognize that command. {e:?}"),
         }
     }
